@@ -1,5 +1,9 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.entity.Expense;
 import org.example.entity.ExpenseCategory;
 import org.example.service.ExpenseService;
@@ -16,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Expense Management", description = "APIs for managing user expenses")
 @RestController
 @RequestMapping("/api/expenses")
 public class ExpenseController {
@@ -29,12 +34,18 @@ public class ExpenseController {
     /**
      * Créer une nouvelle dépense
      */
+    @Operation(summary = "Create new expense",
+            description = "Add a new expense for the authenticated user")
+    @ApiResponse(responseCode = "201", description = "Expense created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid request body")
     @PostMapping
     public ResponseEntity<Map<String, Object>> createExpense(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody Map<String, Object> request) {
+            //@RequestHeader("Authorization") String authHeader, swagger le prendrait en param required :/
+            @RequestBody Map<String, Object> request,
+            HttpServletRequest httpRequest) {
 
         Map<String, Object> response = new HashMap<>();
+        String authHeader = httpRequest.getHeader("Authorization");
 
         try {
             // Extraction du token JWT et vérification
@@ -87,15 +98,18 @@ public class ExpenseController {
     /**
      * Récupérer toutes les dépenses avec filtres optionnels
      */
+    @Operation(summary = "Get expenses", description = "Retrieve all expenses or filter by period")
+    @ApiResponse(responseCode = "200", description = "Expenses retrieved")
     @GetMapping
     public ResponseEntity<Map<String, Object>> getExpenses(
-            @RequestHeader("Authorization") String authHeader,
+            //@RequestHeader("Authorization") String authHeader, swagger le prendrait en param required :/
             @RequestParam(value = "filter", required = false) String filter,
             @RequestParam(value = "start_date", required = false) String startDate,
-            @RequestParam(value = "end_date", required = false) String endDate) {
+            @RequestParam(value = "end_date", required = false) String endDate,
+            HttpServletRequest httpRequest) {
 
         Map<String, Object> response = new HashMap<>();
-
+        String authHeader = httpRequest.getHeader("Authorization");
         try {
             // Extraction du token JWT et vérification
             Long userId = getUserIdFromToken(authHeader);
@@ -161,13 +175,19 @@ public class ExpenseController {
     /**
      * Modifier une dépense existante
      */
+
+    @Operation(summary = "Update an expense")
+    @ApiResponse(responseCode = "200", description = "Expense updated")
+    @ApiResponse(responseCode = "404", description = "Expense not found")
     @PutMapping("/{expenseId}")
     public ResponseEntity<Map<String, Object>> updateExpense(
-            @RequestHeader("Authorization") String authHeader,
+            //@RequestHeader("Authorization") String authHeader,
             @PathVariable Long expenseId,
-            @RequestBody Map<String, Object> request) {
+            @RequestBody Map<String, Object> request,
+            HttpServletRequest httpRequest) {
 
         Map<String, Object> response = new HashMap<>();
+        String authHeader = httpRequest.getHeader("Authorization");
 
         try {
             // Extraction du token JWT et vérification
@@ -217,12 +237,17 @@ public class ExpenseController {
     /**
      * Supprimer une dépense
      */
+    @Operation(summary = "Delete an expense")
+    @ApiResponse(responseCode = "200", description = "Expense deleted")
+    @ApiResponse(responseCode = "404", description = "Expense not found")
     @DeleteMapping("/{expenseId}")
     public ResponseEntity<Map<String, Object>> deleteExpense(
-            @RequestHeader("Authorization") String authHeader,
-            @PathVariable Long expenseId) {
+            //@RequestHeader("Authorization") String authHeader,
+            @PathVariable Long expenseId,
+            HttpServletRequest httpRequest) {
 
         Map<String, Object> response = new HashMap<>();
+        String authHeader = httpRequest.getHeader("Authorization");
 
         try {
             // Extraction du token JWT et vérification

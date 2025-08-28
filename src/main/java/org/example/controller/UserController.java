@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
+@Tag(name = "User Management", description = "APIs for user registration and login")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -21,6 +26,11 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
+    // swagger implementation
+    @Operation(summary = "Register a new user",
+            description = "Create a new user account with username, email and password")
+    @ApiResponse(responseCode = "201", description = "User created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid input or user already exists")
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
@@ -80,6 +90,11 @@ public class UserController {
         }
     }
 
+    // swagger implementation
+    @Operation(summary = "User login",
+            description = "Authenticate user and return JWT token")
+    @ApiResponse(responseCode = "200", description = "Login successful")
+    @ApiResponse(responseCode = "400", description = "Invalid credentials")
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
@@ -138,8 +153,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
-        /*
-        token valide: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjoiMjEiLCJpYXQiOjE3NTYyOTIxNjgsImV4cCI6MTc1NjM3ODU2OH0.X0MowcPQ7igw9ZPu5KrFq32-ldrGNl95jWs9Ii7Cqx8
-         */
     }
 }
