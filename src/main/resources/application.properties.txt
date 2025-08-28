@@ -1,0 +1,21 @@
+# Configuration Oracle Database
+spring.datasource.url=jdbc:oracle:thin:@localhost:1521:XE
+spring.datasource.username=system
+spring.datasource.password=ChangePassword
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+
+# Configuration JPA/Hibernate
+spring.jpa.database-platform=org.hibernate.dialect.OracleDialect
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# Configuration du serveur
+server.port=8080
+
+# Désactive la sécurité temporairement pour les tests
+spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+# Configuration JWT
+jwt.secret.key=mySecretKeyForExpenseTrackerAPIThatIsLongEnoughForHS256AlgorithmAndVerySecure123!
+jwt.expiration.time=86400000
