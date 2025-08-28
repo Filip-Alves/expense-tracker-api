@@ -1,103 +1,109 @@
-# Expense Tracker API
+# Expense Tracker Project
 
-API REST pour la gestion des dépenses personnelles, avec authentification JWT et documentation Swagger.
+## Description
+Ce projet est une API REST pour gérer des dépenses personnelles. Il utilise Spring Boot et une base de données Oracle XE.
 
 ---
 
 ## Prérequis
 
-- **Java 17** (ou version compatible Spring Boot 3)
-- **Maven**
-- **Oracle Database XE** (ou équivalent)
-- Optionnel : **Oracle SQL Developer** pour manipuler la base de données facilement
-- IDE recommandé : IntelliJ, VSCode, Eclipse…
+- Java 17 ou supérieur
+- Maven
+- Oracle Database XE (gratuit)
+- Optionnel : Oracle SQL Developer pour gérer la base de données
 
 ---
 
-## Installation de la base de données
+## Installation Oracle Database XE
 
-1. **Installer Oracle Database XE**  
-   Suivez les instructions officielles : https://www.oracle.com/database/technologies/xe-downloads.html
+1. Télécharger Oracle Database XE : [Oracle XE Downloads](https://www.oracle.com/database/technologies/xe-downloads.html)
+2. Installer Oracle XE en suivant les instructions officielles.
+3. Créer un utilisateur dédié pour le projet ou utiliser `system`.
+4. Créer une base de données nommée `expenseTrackerDB`.
 
-2. **Installer Oracle SQL Developer** (optionnel)  
-   Téléchargez ici : https://www.oracle.com/tools/downloads/sqldev-downloads.html
+---
 
-3. **Créer une connexion dans SQL Developer**  
-   - Nom de la connexion : `expenseTrackerDB`  
-   - Username / Password : votre utilisateur Oracle (ex: SYSTEM)  
-   - Hostname : localhost  
-   - Port : 1521  
-   - SID : XE  
+## Installation Oracle SQL Developer (optionnel)
 
-4. **Importer le fichier SQL du projet**  
-   - Ouvrir `project_expense.sql` via SQL Developer  
-   - Exécuter le script pour créer les tables `expenses` et `users` et autres objets nécessaires  
+1. Télécharger Oracle SQL Developer : [SQL Developer Downloads](https://www.oracle.com/tools/downloads/sqldev-downloads.html)
+2. Installer et lancer SQL Developer.
+3. Créer une connexion vers `expenseTrackerDB` avec les credentials choisis.
+4. Tester la connexion.
+
+---
+
+## Importer la base de données du projet
+
+1. Dans SQL Developer, ouvrir l’onglet "Fichier" → "Ouvrir".
+2. Sélectionner le fichier `project_expense.sql`.
+3. Exécuter le script pour créer uniquement les tables `users` et `expenses` utilisées par le projet.
+4. Vérifier que les tables ont été créées.
 
 ---
 
 ## Configuration du projet
 
-1. Renommer le fichier `application.properties.txt` en `application.properties`  
-2. Modifier les propriétés si nécessaire :  
+1. Copier `application.properties.txt` en `application.properties`.
+2. Modifier les paramètres pour correspondre à votre base de données Oracle XE :
 
-    spring.datasource.url=jdbc:oracle:thin:@localhost:1521:XE  
-    spring.datasource.username=VOTRE_USER  
-    spring.datasource.password=VOTRE_PASSWORD  
-    spring.datasource.driver-class-name=oracle.jdbc.OracleDriver  
-    spring.jpa.hibernate.ddl-auto=none  
+```properties
+spring.datasource.url=jdbc:oracle:thin:@localhost:1521:XE
+spring.datasource.username=YOUR_DB_USERNAME
+spring.datasource.password=YOUR_DB_PASSWORD
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 
-> ⚠️ **Ne pas inclure vos credentials réels dans GitHub.**
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.Oracle12cDialect
+```
 
 ---
 
 ## Lancer le projet
 
-1. Dans le terminal ou IDE :  
+1. Depuis la racine du projet, exécuter :
 
-    mvn spring-boot:run
+```bash
+mvn clean install
+mvn spring-boot:run
+```
 
-2. L’API sera accessible sur :  
-    http://localhost:8080
+2. L’API sera disponible sur : `http://localhost:8080`
 
-3. Swagger UI (documentation et test des API) :  
-    http://localhost:8080/swagger-ui.html
+---
+
+## Swagger UI
+
+Une fois le projet lancé, Swagger est disponible pour tester les API :
+
+- URL : [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+Vous pourrez y tester toutes les API (`UserController` et `ExpenseController`) directement depuis le navigateur.
 
 ---
 
 ## API principales
 
-- **UserController** : `/api/users/register`, `/api/users/login`  
-- **ExpenseController** : `/api/expenses` (GET, POST), `/api/expenses/{id}` (PUT, DELETE)  
+### User
 
-> Swagger vous permet de tester toutes les routes directement depuis le navigateur.  
+- **POST /api/users/register** – Créer un utilisateur
+- **POST /api/users/login** – Authentifier un utilisateur
 
----
+### Expense
 
-## Tester avec Postman
+- **POST /api/expenses** – Créer une dépense
+- **GET /api/expenses** – Lister les dépenses (avec filtres)
+- **PUT /api/expenses/{id}** – Mettre à jour une dépense
+- **DELETE /api/expenses/{id}** – Supprimer une dépense
 
-- Créer les headers :  
-  - `Content-Type: application/json`  
-  - `Authorization: Bearer <votre_token>` pour les endpoints sécurisés  
-
-- Exemple POST `/api/expenses` :  
-
-    {
-      "description": "Visite médicale",
-      "amount": 120.00,
-      "category": "Health",
-      "expense_date": "2025-08-28"
-    }
+> Attention : toutes les API Expense nécessitent un JWT dans l’en-tête `Authorization`.
 
 ---
 
 ## Notes
 
-- La base Oracle doit être en cours d’exécution pour que l’application fonctionne.  
-- Les tables sont pré-remplies via le script SQL `project_expense.sql`.  
-- Swagger UI peut être utilisé pour générer et tester des tokens JWT, mais Postman fonctionne aussi parfaitement.
+- Les tests peuvent être faits via **Postman** ou **Swagger UI**.
+- Le fichier `application.properties` n’est pas versionné pour des raisons de sécurité (mot de passe).
+- Le projet utilise Spring Boot, Spring Data JPA et une base Oracle XE.
 
----
-
-## Commit suggéré
-
-    git commit -m "Add README with setup instructions and database import"
