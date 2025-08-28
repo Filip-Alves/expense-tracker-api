@@ -30,10 +30,11 @@ public class Expense {
     @Positive(message = "Amount must be positive")
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     @NotNull(message = "Category is required")
-    private ExpenseCategory category;
+    private String category;
+
+
 
     @Column(name = "expense_date", nullable = false)
     @NotNull(message = "Expense date is required")
@@ -52,11 +53,12 @@ public class Expense {
         this.userId = userId;
         this.description = description;
         this.amount = amount;
-        this.category = category;
+        this.category = category.getDisplayName(); // IMPORTANT
         this.expenseDate = expenseDate;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
+
 
     // Getters et Setters
     public Long getId() { return id; }
@@ -71,8 +73,10 @@ public class Expense {
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
 
-    public ExpenseCategory getCategory() { return category; }
-    public void setCategory(ExpenseCategory category) { this.category = category; }
+    public String getCategory() { return category; }
+    public void setCategory(ExpenseCategory category) {
+        this.category = category.getDisplayName(); // stocke la valeur compatible DB
+    }
 
     public LocalDate getExpenseDate() { return expenseDate; }
     public void setExpenseDate(LocalDate expenseDate) { this.expenseDate = expenseDate; }
