@@ -278,8 +278,6 @@ public class ExpenseController {
         }
     }
 
-    // Méthodes utilitaires privées
-
     private Long getUserIdFromToken(String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
